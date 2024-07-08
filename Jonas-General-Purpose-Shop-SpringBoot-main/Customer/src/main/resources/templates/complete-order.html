@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org/">
+
+<head th:replace="fragmenta :: head-link"></head>
+
+<!-- Ensure jQuery and Bootstrap JS files are included -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<body>
+
+<!--<div th:replace="fragmenta :: preloader"></div>-->
+
+<div id="main-wrapper">
+
+	<div th:replace="fragmenta :: top-header"></div>
+
+	<div th:replace="fragmenta :: title-menu"></div>
+
+	<div class="clearfix"></div>
+
+
+	<!-- ======================= Product Detail ======================== -->
+	<section class="middle">
+		<div class="container">
+
+			<div class="row justify-content-center">
+				<div class="col-12 col-md-10 col-lg-8 col-xl-6 text-center">
+
+					<!-- Icon -->
+					<div class="p-4 d-inline-flex align-items-center justify-content-center circle bg-light-success text-success mx-auto mb-4">
+						<i class="lni lni-heart-filled fs-lg"></i>
+					</div>
+					<!-- Heading -->
+					<h2 class="mb-2 ft-bold">Your Order is Successfully Placed!</h2>
+					<!-- Text -->
+					<p class="ft-regular fs-md mb-5">Your order has been completed. Your order details are shown for your personal account. Please complete your payment after accepted.</p>
+					<!-- Button -->
+					<a id="completePaymentBtn" class="btn btn-dark" data-toggle="modal" data-target="#paymentModal" href="#">Click To Pay</a>
+				</div>
+				<div class="col-12 text-center">
+					<img src="assets/images/logo_icon-removebg-preview (1).png" class="img-fluid my-3 mx-auto" style="max-width: 150px;">
+				</div>
+			</div>
+			<style>
+				.fs-lg {
+                    font-size: 1.5rem;
+                }
+
+                .circle {
+                    width: 60px;
+                    height: 60px;
+                    border-radius: 50%;
+                }
+			</style>
+
+			<!-- Modal -->
+			<div id="paymentModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="paymentModalLabel" aria-hidden="true">
+				<div class="modal-dialog modal-dialog-centered" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" id="paymentModalLabel">Make Payment UPI</h5>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+						<div class="modal-body">
+							<!-- Static QR Code -->
+							<div class="text-center mb-4">
+								<img src="assets/images/WhatsApp Image 2024-06-26 at 12.43.08_01803afd.jpg" alt="GPay Screenshot" style="max-width: 100%;">
+							</div>
+							<!-- Countdown timer -->
+							<p id="countdownTimer" class="text-center"></p>
+
+							<!-- Display total price dynamically -->
+<!--							<p id="totalPriceDisplay" class="text-center ft-bold fs-lg">Total Amount: <span th:text="${order.totalPrice}">0.00</span></p>-->
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+						</div>
+					</div>
+				</div>
+			</div>
+
+
+			<script th:inline="javascript">
+				/*<![CDATA[*/
+                $(document).ready(function() {
+                    // Function to start countdown timer
+                    function startCountdown(duration, display) {
+                        var timer = duration, minutes, seconds;
+                        var interval = setInterval(function () {
+                            minutes = parseInt(timer / 60, 10);
+                            seconds = parseInt(timer % 60, 10);
+
+                            minutes = minutes < 10 ? "0" + minutes : minutes;
+                            seconds = seconds < 10 ? "0" + seconds : seconds;
+
+                            display.textContent = minutes + ":" + seconds;
+
+                            if (--timer < 0) {
+                                clearInterval(interval); // Clear interval to stop the timer
+                                $('#paymentModal').modal('hide'); // Hide modal when timer expires
+                            }
+                        }, 1000);
+                    }
+
+                    // On button click, show modal and start timer
+                    $('#completePaymentBtn').click(function() {
+                        var countdownDisplay = document.getElementById('countdownTimer');
+                        var fiveMinutes = 60 * 5; // 5 minutes countdown
+                        startCountdown(fiveMinutes, countdownDisplay); // Start countdown timer
+                        $('#paymentModal').modal('show'); // Show modal
+                    });
+                });
+                /*]]>*/
+			</script>
+
+		</div>
+	</section>
+
+	<section th:replace="fragmenta :: features"></section>
+
+	<footer th:replace="fragmenta :: footer"></footer>
+
+	<a id="back2Top" class="top-scroll" title="Back to top" href="#"><i class="ti-arrow-up"></i></a>
+
+</div>
+
+<div th:replace="fragmenta :: scripts"></div>
+
+</body>
+
+</html>

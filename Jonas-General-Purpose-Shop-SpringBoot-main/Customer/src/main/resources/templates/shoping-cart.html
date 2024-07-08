@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org/">
+
+<head th:replace="fragmenta :: head-link"></head>
+
+<body>
+
+<!--<div th:replace="fragmenta :: preloader"></div>-->
+
+<div id="main-wrapper">
+
+	<div th:replace="fragmenta :: top-header"></div>
+
+	<div th:replace="fragmenta :: title-menu"></div>
+
+	<div class="clearfix"></div>
+
+			<section class="middle">
+				<div class="container">
+
+					<div class="row">
+						<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+							<div class="text-center d-block mb-5">
+								<h2>Shopping Cart</h2>
+							</div>
+						</div>
+					</div>
+					<div>
+						<div th:if="${check}" class="text-center alert-warning">
+							<p th:text="${check}"></p>
+						</div>
+					</div>
+
+					<div class="row justify-content-between">
+						<div class="col-12 col-lg-9 col-md-12">
+							<ul class="list-group list-group-sm list-group-flush-y list-group-flush-x mb-4">
+								<table class="table table-hover">
+									<thead>
+										<tr>
+											<th>Images</th>
+											<th>Product Name</th>
+											<th>Price</th>
+											<th>Quantity</th>
+											<th>Total</th>
+											<th>Action</th>
+										</tr>
+									</thead>
+
+									<tbody th:if="${shoppingCart != null}">
+										<tr th:each="cartItem : ${shoppingCart.cartItem}">
+											<td>
+												<a th:href = "@{/find-product/{id}(id = ${cartItem.product.id})}">
+													<img th:src="*{'data:image/jpeg;base64,' + cartItem.product.image}" style="width: 60px; height: auto" class="img-fluid" th:alt="${cartItem.product.name}">
+												</a>
+											</td>
+											<td>
+												<a class="p-0 m-0" th:href = "@{/find-product/{id}(id = ${cartItem.product.id})}">
+													<h4 class="product_title fs-md ft-medium mb-1 lh-1" th:text="${cartItem.product.name}"></h4>
+												</a>
+												<p class="p-0 m-0" th:text="${cartItem.product.category.name}"></p>
+											</td>
+											<td><h4 class="fs-md text-dark mb-3 lh-1 text-muted" th:text="' ₹' + ${cartItem.product.salePrice}"></h4></td>
+											<form th:action="@{/update-cart}" method="post">
+												<input type="hidden" name="id" th:value="${cartItem.product.id}">
+												<td class="quantity-box">
+													<input type="number" size="4" th:value="${cartItem.quantity}" name="quantity" min="0" step="1" class="c-input-text qty text form-control">
+												</td>
+												<td class="fs-md text-dark mb-3 lh-1"><p th:text="' ₹' + ${cartItem.totalPrice}"></p></td>
+												<td class="remove-pr">
+													<button type="submit" name="action" value="update" title="Update" class="btn btn-sm btn-outline-secondary">Update</button>
+													<button type="submit" name="action" value="delete" title="Delete" class="btn btn-sm btn-outline-danger">Remove</button>
+												</td>
+											</form>
+
+										</tr>
+									</tbody>
+								</table>
+							</ul>
+						</div>
+						<div th:if="${insufficientStock}" class="alert alert-warning text-center">
+							<p th:text="${insufficientStock}"></p>
+						</div>
+
+						<div class="col-12 col-md-12 col-lg-3">
+							<div class="card mb-4 gray mfliud">
+								<div class="card-body">
+									<ul class="list-group list-group-sm list-group-flush-y list-group-flush-x">
+										<li class="list-group-item d-flex text-dark fs-sm ft-regular">
+											<span>Subtotal</span> <span th:if="${subTotal != null}"  th:text = "' ₹' + ${subTotal}" class="ml-auto text-dark ft-medium"></span>
+										</li>
+										<li class="list-group-item d-flex text-dark fs-sm ft-regular">
+											<span>Discount: </span> <span th:if="${discountPrice != null}" th:text="' ₹' + ${discountPrice}" class="ml-auto text-dark ft-medium"></span>
+										</li>
+										<li class="list-group-item d-flex text-dark fs-sm ft-regular">
+											<span>Grand Total</span> <span th:if="${subTotal != null}" th:text = " ' ₹' + ${subTotal - discountPrice}" class="ml-auto text-dark ft-medium"></span>
+										</li>
+									</ul>
+								</div>
+							</div>
+
+							<div th:if="${grandTotal != null && grandTotal < 3000}"
+								 class="alert alert-danger text-center">
+								Minimum order amount is $3000. Please add more items to proceed.
+							</div>
+
+							<!-- Proceed to Checkout button -->
+							<a th:if="${grandTotal != null && grandTotal >= 3000}"
+							   class="btn btn-block btn-dark mb-3" th:href="@{/check-out}">Proceed to Checkout</a>
+
+							<a class="btn-link text-dark ft-medium" th:href="@{/products}">
+								<i class="ti-back-left mr-2"></i> Continue Shopping
+							</a>
+						</div>
+					</div>
+
+				</div>
+			</section>
+
+			<section th:replace="fragmenta :: features"></section>
+
+			<footer th:replace="fragmenta :: footer"></footer>
+
+			<!-- Product View Modal -->
+			<div class="modal fade lg-modal" id="quickview" tabindex="-1" role="dialog" aria-labelledby="quickviewmodal" aria-hidden="true">
+				<div class="modal-dialog modal-xl login-pop-form" role="document">
+					<div class="modal-content" id="quickviewmodal">
+						<div class="modal-headers">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							  <span class="ti-close"></span>
+							</button>
+						  </div>
+
+						<div class="modal-body">
+
+			<!-- End Modal -->
+
+			<!-- Log In Modal -->
+			<div class="modal fade" id="login" tabindex="-1" role="dialog" aria-labelledby="loginmodal" aria-hidden="true">
+				<div class="modal-dialog modal-xl login-pop-form" role="document">
+					<div class="modal-content" id="loginmodal">
+						<div class="modal-headers">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							  <span class="ti-close"></span>
+							</button>
+						  </div>
+
+						<div class="modal-body p-5">
+							<div class="text-center mb-4">
+								<h2 class="m-0 ft-regular">Login</h2>
+							</div>
+
+							<form>
+								<div class="form-group">
+									<label>User Name</label>
+									<input type="text" class="form-control" placeholder="Username*">
+								</div>
+
+								<div class="form-group">
+									<label>Password</label>
+									<input type="password" class="form-control" placeholder="Password*">
+								</div>
+
+								<div class="form-group">
+									<div class="d-flex align-items-center justify-content-between">
+										<div class="flex-1">
+											<input id="dd" class="checkbox-custom" name="dd" type="checkbox">
+											<label for="dd" class="checkbox-custom-label">Remember Me</label>
+										</div>
+										<div class="eltio_k2">
+											<a href="#">Lost Your Password?</a>
+										</div>
+									</div>
+								</div>
+
+								<div class="form-group">
+									<button type="submit" class="btn btn-md full-width bg-dark text-light fs-md ft-medium">Login</button>
+								</div>
+
+								<div class="form-group text-center mb-0">
+									<p class="extra">Not a member?<a href="#et-register-wrap" class="text-dark"> Register</a></p>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- End Modal -->
+
+			<!-- Search -->
+			<div class="w3-ch-sideBar w3-bar-block w3-card-2 w3-animate-right" style="display:none;right:0;" id="Search">
+				<div class="rightMenu-scroll">
+					<div class="d-flex align-items-center justify-content-between slide-head py-3 px-3">
+						<h4 class="cart_heading fs-md ft-medium mb-0">Search Products</h4>
+						<button onclick="closeSearch()" class="close_slide"><i class="ti-close"></i></button>
+					</div>
+
+					<div class="cart_action px-3 py-4">
+						<form class="form m-0 p-0">
+							<div class="form-group">
+								<input type="text" class="form-control" placeholder="Product Keyword.." />
+							</div>
+
+
+							<div class="form-group mb-0">
+								<button type="button" class="btn d-block full-width btn-dark">Search Product</button>
+							</div>
+						</form>
+					</div>
+
+					<div class="d-flex align-items-center justify-content-center br-top br-bottom py-2 px-3">
+						<h4 class="cart_heading fs-md mb-0">Hot Categories</h4>
+					</div>
+
+
+				</div>
+			</div>
+
+			<!-- Wishlist -->
+			<div class="w3-ch-sideBar w3-bar-block w3-card-2 w3-animate-right" style="display:none;right:0;" id="Wishlist">
+				<div class="rightMenu-scroll">
+					<div class="d-flex align-items-center justify-content-between slide-head py-3 px-3">
+						<h4 class="cart_heading fs-md ft-medium mb-0">Saved Products</h4>
+						<button onclick="closeWishlist()" class="close_slide"><i class="ti-close"></i></button>
+					</div>
+					<div class="right-ch-sideBar">
+
+						<div class="cart_select_items py-2">
+							<!-- Single Item -->
+
+
+							<!-- Single Item -->
+
+							<!-- Single Item -->
+
+
+						<div class="d-flex align-items-center justify-content-between br-top br-bottom px-3 py-3">
+							<h6 class="mb-0">Subtotal</h6>
+							<h3 class="mb-0 ft-medium">$417</h3>
+						</div>
+
+						<div class="cart_action px-3 py-3">
+							<div class="form-group">
+								<button type="button" class="btn d-block full-width btn-dark">Move To Cart</button>
+							</div>
+							<div class="form-group">
+								<button type="button" class="btn d-block full-width btn-dark-light">Edit or View</button>
+							</div>
+						</div>
+
+					</div>
+				</div>
+			</div>
+				<style>
+					/* Styles for buttons in shopping cart */
+                    .remove-pr button {
+                        width: 100%; /* Ensure buttons take full width on small screens */
+                        margin-bottom: 5px; /* Add space between buttons */
+                    }
+
+                    /* Responsive adjustments */
+                    @media (max-width: 768px) {
+                        .remove-pr button {
+                            display: block; /* Display buttons as block elements for better stacking */
+                            width: auto; /* Revert width to auto for default size */
+                            margin-bottom: 10px; /* Increase bottom margin for better spacing */
+                        }
+                    }
+				</style>
+
+<!--	-->
+
+			<!-- Back to top -->
+			<a id="back2Top" class="top-scroll" title="Back to top" href="#"><i class="ti-arrow-up"></i></a>
+		</div>
+		<div th:replace="fragmenta :: scripts"></div>
+
+</body>
+</html>

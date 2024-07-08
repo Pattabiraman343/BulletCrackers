@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loading...</title>
+    <style>
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #fff;
+        }
+        .loading img {
+               width: 315px;
+    height: 492px;
+        }
+    </style>
+</head>
+<body>
+<div class="loading">
+    <img src="assets/images/download.gif" alt="Loading...">
+</div>
+<script>
+    setTimeout(function() {
+        window.location.href = '/home';
+    }, 2000);
+</script>
+</body>
+</html>

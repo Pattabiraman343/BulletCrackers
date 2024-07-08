@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org/">
+
+<head th:replace="fragmenta :: head-link"></head>
+
+<body>
+
+<!--	<div th:replace="fragmenta :: preloader"></div>-->
+
+<div id="main-wrapper">
+
+	<div th:replace="fragmenta :: top-header"></div>
+
+	<div th:replace="fragmenta :: title-menu"></div>
+
+	<div class="clearfix"></div>
+
+	<!-- ======================= Product List ======================== -->
+	<section class="middle">
+		<div class="container" th:each="category : ${categories}">
+
+			<div class="row justify-content-center">
+				<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+					<div class="sec_title position-relative text-center">
+						<h1 class="ft-bold pt-3" th:text="${category.name}"></h1>
+					</div>
+				</div>
+			</div>
+
+			<div class="row align-items-center rows-products">
+				<div class="col-xl-3 col-lg-4 col-md-6 col-6" th:each="product : ${products}" th:if="${product.category.id == category.id}">
+					<div class="product_grid card b-0">
+						<form th:action="@{/add-to-cart}" method="post" onsubmit="return addToCart(this);">
+							<div class="product_grid card b-0 border">
+								<input type="hidden" th:value="${product.id}" name="id">
+								<div class="badge bg-info text-white position-absolute ft-regular ab-left text-upper"><span th:text="${product.category.name}"></span></div>
+								<div class="card-body p-0">
+									<div class="shop_thumb position-relative custom-overflow-hidden">
+										<a class="card-img-top d-block overflow-hidden ovr-hide" th:href="@{/find-product/{id}(id = ${product.id})}">
+											<img class="card-img-top" th:src="*{'data:image/jpeg;base64,' + product.image}" th:alt="${product.name}" style="height: 250px; width: 250px;">
+										</a>
+										<a class="card-img-top d-block overflow-hidden ovr-show" th:href="@{/find-product/{id}(id = ${product.id})}">
+											<img class="card-img-top custom-product-hover" th:src="*{'data:image/jpeg;base64,' + product.image}" alt="..." style="height: 250px; width: 250px;">
+										</a>
+										<div class="product-hover-overlay btn d-flex align-items-center justify-content-center">
+											<div class="group_btn">
+												<a href="#" data-toggle="modal" data-target="#quickview" class="prd_btn_square">
+													<i class="ti-fullscreen"></i>
+												</a>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="card-footer b-0 p-3 pb-0 bg-white d-flex align-items-start justify-content-center">
+									<div class="text-left">
+										<div class="text-center">
+											<h5 class="fw-bolder fs-md mb-0 lh-1 mb-1"><a th:href="@{/find-product/{id}(id = ${product.id})}" th:text="${product.name}"></a></h5>
+											<div class="elis_rty">
+												<span class="text-muted ft-medium line-through mr-2" th:text="'₹' + ${product.costPrice}">₹</span>
+												<span class="ft-bold theme-cl fs-md" th:text="'₹' + ${product.salePrice}">₹</span>
+											</div>
+											<p th:if="${session.username == null}" class="alert alert-warning" role="alert">
+												Please sign in to add this item to your cart.
+											</p>
+											<input type="number" name="quantity" min="1" max="${product.currentQuantity}" value="1" class="quantity-input" required style="width: 10rem;">
+											<button type="submit" class="prd_btn_square1" th:if="${product.currentQuantity <= 0}"
+													data-toggle="tooltip" data-placement="top" title="Out of Stock" disabled>Out of Stock</button>
+											<button type="submit" class="prd_btn_square1" th:if="${product.currentQuantity > 0}" data-toggle="tooltip" data-placement="top" title="Add To Cart">Add to Cart</button>
+										</div>
+									</div>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	<style>
+		.product_grid {
+            border: 1px solid #ccc; /* Example border style */
+            border-radius: 5px; /* Example border radius */
+            margin-bottom: 20px; /* Example margin between products */
+        }
+
+        .card-img-top {
+            height: 250px; /* Fixed height for the image */
+            width: 250px; /* Fixed width for the image */
+            object-fit: cover; /* Ensure the image covers the specified dimensions */
+        }
+
+        .prd_btn_square1 {
+            background: #47aeff;
+            color: white;
+            border-radius: 3rem;
+            margin-top: 1rem;
+        }
+	</style>
+	<script>
+		function addToCart(form) {
+            var quantity = parseInt(form.quantity.value);
+            var maxQuantity = parseInt(form.quantity.getAttribute('max'));
+
+            if (isNaN(quantity) || quantity < 1) {
+                console.error("Please enter a valid quantity.");
+                return false;
+            }
+
+            if (quantity > maxQuantity) {
+                console.error("Insufficient stock available.");
+                return false;
+            }
+
+            // Reference to the "Add to Cart" button for visual feedback
+            var addToCartButton = form.querySelector('button[type="submit"]');
+            if (!addToCartButton) {
+                console.error("Add to Cart button not found.");
+                return false;
+            }
+
+            // Example AJAX request using Fetch API
+            fetch(form.action, {
+                method: 'POST',
+                body: new FormData(form)
+            }).then(response => {
+                if (response.ok) {
+                    // Show checkmark icon briefly
+                    addToCartButton.innerHTML = '<i class="fas fa-check-circle"></i>';
+                    setTimeout(function() {
+                        addToCartButton.innerHTML = '<i class="lni lni-shopping-basket"></i>'; // Reset button icon after a delay
+                    }, 2000); // 2000 milliseconds (2 seconds) delay
+                } else {
+                    console.error('Failed to add item to cart.');
+                }
+            }).catch(error => {
+                console.error('Error adding item to cart:', error);
+            });
+
+            return false; // Prevent form from submitting traditionally
+        }
+	</script>
+
+	<section th:replace="fragmenta :: features"></section>
+
+	<footer th:replace="fragmenta :: footer"></footer>
+
+	<a id="back2Top" class="top-scroll" title="Back to top" href="#"><i class="ti-arrow-up"></i></a>
+
+</div>
+<div th:replace="fragmenta :: scripts"></div>
+
+</body>
+
+</html>

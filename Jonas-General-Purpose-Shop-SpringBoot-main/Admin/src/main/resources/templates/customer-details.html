@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Customer Details</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+        }
+
+        h1, h2 {
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .customer-info {
+            margin-bottom: 20px;
+        }
+
+        .customer-info p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Admin - Customer Details</h1>
+
+<div class="customer-info" th:if="${customer}">
+    <h2>Billing Details</h2>
+    <p>Customer Name: <span th:text="${customer.firstName} + ' ' + ${customer.lastName}"></span></p>
+    <p>Email: <span th:text="${customer.username}"></span></p>
+    <p>Phone Number: <span th:text="${customer.phoneNumber}"></span></p>
+    <p>Address: <span th:text="${customer.address + ' ' + customer.city + ' ' + customer.country}"></span></p>
+</div>
+
+<h2>Cart Items</h2>
+<table>
+    <thead>
+    <tr>
+        <th>Product Name</th>
+        <th>Quantity</th>
+        <th>Total Price</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="item : ${orderDetails}">
+        <td th:text="${item.product.name}"></td>
+        <td th:text="${item.quantity}"></td>
+        <td th:text="${item.totalPrice}"></td>
+    </tr>
+    </tbody>
+    <tfoot>
+    <tr>
+        <th colspan="2">Total</th>
+        <td id="totalPrice"></td>
+    </tr>
+    </tfoot>
+</table>
+
+<script>
+    // Calculate total price of all products
+    document.addEventListener('DOMContentLoaded', function() {
+        let totalPrice = 0;
+        document.querySelectorAll('tbody tr').forEach(function(row) {
+            let price = parseFloat(row.querySelector('td:nth-child(3)').textContent);
+            totalPrice += price;
+        });
+        document.getElementById('totalPrice').textContent = totalPrice.toFixed(2); // Display total price
+    });
+</script>
+
+</body>
+</html>
