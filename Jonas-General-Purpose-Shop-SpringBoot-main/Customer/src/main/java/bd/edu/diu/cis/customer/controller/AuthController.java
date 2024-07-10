@@ -49,19 +49,22 @@ public class AuthController {
             }
             Customer customer = customerService.findByUsername(customerDto.getUsername());
             if (customer != null) {
-                model.addAttribute("username", "Username have been registered");
+                model.addAttribute("username", "Username has already been registered");
                 model.addAttribute("customerDto", customerDto);
                 return "sign-up";
             }
             customerDto.setPassword(passwordEncoder.encode(customerDto.getPassword()));
             customerService.save(customerDto);
-            model.addAttribute("success", "Register successfully");
-            return "sign-up";
+            model.addAttribute("success", "Registered successfully");
+
+            // Redirect to login page after successful registration
+            return "redirect:/login";
         } catch (Exception e) {
-            model.addAttribute("error", "Server have ran some problems");
+            model.addAttribute("error", "Server encountered some problems");
             model.addAttribute("customerDto", customerDto);
             return "sign-up";
         }
     }
+
 
 }
