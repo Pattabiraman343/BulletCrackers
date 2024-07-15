@@ -41,7 +41,7 @@ public class CustomerConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/add-to-cart/**").permitAll() // Permit all access to add-to-cart endpoints
+//                .antMatchers("/add-to-cart/**").permitAll() // Permit all access to add-to-cart endpoints
 
                 .antMatchers("/").permitAll() // Permit all access to the home page
                 .antMatchers("/customer/**").hasAuthority("CUSTOMER") // Require CUSTOMER authority for /customer/**
